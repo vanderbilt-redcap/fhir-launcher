@@ -18,16 +18,9 @@ require_once "vendor/autoload.php";
 $HtmlPage = new \HtmlPage();
 $HtmlPage->PrintHeaderExt();
 
-// Your HTML page content goes here
-?>
-<h3 style="color:#800000;">
-	FHIR Standalone Launch
-</h3>
-<p>
-	<a href="launch.php" target="_SELF">launch</a>
+$launcher = new Launcher();
 
-</p>
-<?php
+$launcher->authorize();
 
 // OPTIONAL: Display the footer
 $HtmlPage->PrintFooterExt();

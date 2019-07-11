@@ -8,6 +8,11 @@ class Launcher {
         echo "launcher";
     }
 
+    /**
+     * get the auth and token urls
+     *
+     * @return object {token, authorize}
+     */
     public function getConformanceUrls()
     {
         global $fhir_endpoint_base_url, $fhir_endpoint_token_url, $fhir_endpoint_authorize_url;
@@ -37,23 +42,29 @@ class Launcher {
             $urls[$type] = $url;
             # code...
         }
-        // var_dump($security_extensions);
-        return $urls;
+
+        return (object)$urls;
     }
 
-    public function authorize($auth_url)
+    public function authorize()
     {
         global $fhir_endpoint_base_url,
                 $fhir_client_id,
                 $redcap_base_url;
+
+        $urls = $this->getConformanceUrls();
+        $auth_url = $urls->authorize;
+        session_start();
+        $fhirState = session_id();
+
         // add slash at the end if missing
         $base_url = preg_replace('/(.+[^\/]$)/', '$1/', $redcap_base_url);
         $redirect_URL = $redcap_base_url.'ehr.php';
         $data = array(
             'scope' => 'launch/patient',
             'response_type' => 'code',
-            'state' => '1234567890',
-            'redirect_uri' => 'https://redcaptest.vanderbilt.edu/ehr.php', //$redirect_URL,
+            'state' => $fhirState,
+            'redirect_uri' => $redirect_URL,
             'aud' => $fhir_endpoint_base_url,
             'client_id' => $fhir_client_id,
         );
